@@ -21,7 +21,7 @@ class Process(object):
             exit(1)
 
     def output_doc(self, fn_path, docno, raw_content):
-        with open( fn_path, 'wb') as f:
+        with open( fn_path, 'ab') as f:
             f.write('<DOC>\n')
             f.write('<DOCNO>%s</DOCNO>\n' % docno)
             f.write('<TEXT>\n')
@@ -33,22 +33,12 @@ class Process(object):
         with open( os.path.join(self.corpus_path, 'docs.json') ) as f:
             docs = json.load(f)
 
-        abstract_dir = os.path.join(self.corpus_path, 'abstract')
-        if not os.path.exists(abstract_dir):
-            os.makedirs(abstract_dir)
-        raw_dir = os.path.join(self.corpus_path, 'raw')
-        if not os.path.exists(raw_dir):
-            os.makedirs(raw_dir)
-        first_30_char_dir = os.path.join(self.corpus_path, 'first30')
-        if not os.path.exists(first_30_char_dir):
-            os.makedirs(first_30_char_dir)
-
         for doc in docs:
             docno = str(doc['docno'])
-            self.output_doc(os.path.join(abstract_dir, docno), docno, doc['abstra'])
-            self.output_doc(os.path.join(raw_dir, docno), docno, doc['rawText'])
+            self.output_doc(os.path.join(self.corpus_path, 'abstract'), docno, doc['abstra'])
+            self.output_doc(os.path.join(self.corpus_path, 'raw'), docno, doc['rawText'])
             word_vec = ' '.join(doc['rawText'].split()[:30])
-            self.output_doc(os.path.join(first_30_char_dir, docno), docno, word_vec)
+            self.output_doc(os.path.join(self.corpus_path, 'first30'), docno, word_vec)
             
 
 if __name__ == '__main__':
