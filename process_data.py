@@ -44,7 +44,7 @@ class Process(object):
             os.makedirs(first_30_char_dir)
 
         for doc in docs:
-            docno = doc['docno']
+            docno = str(doc['docno'])
             self.output_doc(os.path.join(abstract_dir, docno), docno, doc['abstra'])
             self.output_doc(os.path.join(raw_dir, docno), docno, doc['rawText'])
             word_vec = ' '.join(doc['rawText'].split()[:30])
