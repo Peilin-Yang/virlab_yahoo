@@ -23,7 +23,7 @@ class Process(object):
     def output_doc(self, fn_path, docno, raw_content):
         with open( fn_path, 'wb') as f:
             f.write('<DOC>\n')
-            f.write('<DOCNO>%s</DOCNO>\n', docno)
+            f.write('<DOCNO>%s</DOCNO>\n' % docno)
             f.write('<TEXT>\n')
             f.write('%s\n' % raw_content)
             f.write('</TEXT>\n')
