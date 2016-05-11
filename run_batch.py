@@ -14,6 +14,7 @@ import inspect
 
 import ArrayJob
 import query
+import g
 
 _root = '../'
 
