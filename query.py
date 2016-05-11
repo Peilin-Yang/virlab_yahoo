@@ -85,7 +85,7 @@ class Query(object):
 
         if not os.path.exists(self.parsed_query_file_path):
             unique_queries = {}
-            _all = {}
+            _all = []
             with open(self.query_file_path) as f:
                 raw_query_json = json.load(f)
                 idx = 1
