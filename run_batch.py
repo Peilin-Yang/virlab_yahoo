@@ -15,7 +15,7 @@ import inspect
 import ArrayJob
 import query
 
-_root = '../collections/'
+_root = '../'
 
 def gen_batch_framework(para_label, batch_pythonscript_para, all_paras, \
         quote_command=False, memory='2G', max_task_per_node=50000, num_task_per_node=50):

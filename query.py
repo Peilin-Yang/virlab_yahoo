@@ -28,7 +28,7 @@ class Query(object):
             print '[Evaluation Constructor]:Please provide a valid corpus path'
             exit(1)
 
-        self.query_file_path = os.path.join(self.corpus_path, 'raw_topics')
+        self.query_file_path = os.path.join(self.corpus_path, 'json', 'queries.json')
         if not os.path.exists(self.query_file_path):
             frameinfo = getframeinfo(currentframe())
             print frameinfo.filename, frameinfo.lineno
@@ -37,7 +37,8 @@ class Query(object):
                 corpus path. You can create a symlink for it"""
             exit(1)
 
-        self.parsed_query_file_path = os.path.join(self.corpus_path, 'parsed_topics.json')
+        self.parsed_query_file_path = os.path.join(self.corpus_path, 'json', 'parsed_topics.json')
+        self.index_path = os.path.join(self.corpus_path, 'index')
         self.split_queries_root = os.path.join(self.corpus_path, 'split_queries')
         self.split_results_root = os.path.join(self.corpus_path, 'split_results')
 
@@ -83,38 +84,17 @@ class Query(object):
         """
 
         if not os.path.exists(self.parsed_query_file_path):
+            unique_queries = {}
+            _all = {}
             with open(self.query_file_path) as f:
-                s = f.read()
-                all_topics = re.findall(r'<top>.*?<\/top>', s, re.DOTALL)
-                #print all_topics
-                #print len(all_topics)
-
-                _all = []
-                for t in all_topics:
-                    t = re.sub(r'<\/.*?>', r'', t, flags=re.DOTALL)
-                    a = re.split(r'(<.*?>)', t.replace('<top>',''), re.DOTALL)
-                    #print a
-                    aa = [ele.strip() for ele in a if ele.strip()]
-                    #print aa
-                    d = {}
-                    for i in range(0, len(aa), 2):
-                        """
-                        if i%2 != 0:
-                            if aa[i-1] == '<num>':
-                                aa[i] = aa[i].split()[1]
-                            d[aa[i-1][1:-1]] = aa[i].strip().replace('\n', ' ')
-                        """
-                        tag = aa[i][1:-1]
-                        if tag == 'querytime':
-                            value = aa[i+1].strip()
-                        else:
-                            value = aa[i+1].replace('\n', ' ').strip().split(':')[-1].strip()
-                        if tag != 'num' and tag != 'querytime' and value:
-                            value = self.parse_query([value])[0]
-
-                        d[tag] = value
-                    _all.append(d)
-
+                raw_query_json = json.load(f)
+                idx = 1
+                for ele in raw_query_json:
+                    parsed_query = self.parse_query(ele['query'])[0]
+                    if parsed_query not in unique_queries:
+                        unique_queries[parsed_query] = idx
+                        _all.append({'query': parsed_query, 'num': idx})
+                        idx += 1
             with open(self.parsed_query_file_path, 'wb') as f:
                 json.dump(_all, f, indent=2)
 
@@ -170,8 +150,8 @@ class Query(object):
 
 
     def gen_query_file_for_indri(self, output_foler='split_queries', 
-            index_path='index', is_trec_format=True, count=1000, 
-            remove_stopwords=False, use_which_part=['title']):
+            index_path='index', is_trec_format=True, count=9999999, 
+            remove_stopwords=False, use_which_part=['query']):
         """
         generate the query file for Indri use.
 
@@ -193,32 +173,32 @@ class Query(object):
 
         for ele in all_topics:
             for part in use_which_part:
-                qf = ET.Element('parameters')
-                index = ET.SubElement(qf, 'index')
-                index.text = os.path.join(self.corpus_path, index_path)
-                ele_trec_format = ET.SubElement(qf, 'trecFormat')
-                ele_trec_format.text = 'true' if is_trec_format else 'false'
-                ele_count = ET.SubElement(qf, 'count')
-                ele_count.text = str(count)
+                for i, query_term in enumerate(ele[part].split()):
+                    for index_path in os.listdir(self.index_path):
+                        qf = ET.Element('parameters')
+                        index = ET.SubElement(qf, 'index')
+                        index.text = os.path.join(self.corpus_path, 'index', index_path)
+                        ele_trec_format = ET.SubElement(qf, 'trecFormat')
+                        ele_trec_format.text = 'true' if is_trec_format else 'false'
+                        ele_count = ET.SubElement(qf, 'count')
+                        ele_count.text = str(count)
 
-                if remove_stopwords:
-                    ele_stopwords = ET.SubElement(qf, 'stopper')
-                    for w in stop_words_list:
-                        stopword = ET.SubElement(ele_stopwords, 'word')
-                        stopword.text = w
-                
-                t = ET.SubElement(qf, 'query')
-                qid = ET.SubElement(t, 'number')
-                qid.text = str(int(ele['num']))
-                q = ET.SubElement(t, 'text')
-                q.text = ''
-                for sep_part in part.split('+'):
-                    q.text += ele[sep_part]+' '
+                        if remove_stopwords:
+                            ele_stopwords = ET.SubElement(qf, 'stopper')
+                            for w in stop_words_list:
+                                stopword = ET.SubElement(ele_stopwords, 'word')
+                                stopword.text = w
+                        
+                        t = ET.SubElement(qf, 'query')
+                        qid = ET.SubElement(t, 'number')
+                        qid.text = str(int(ele['num']))+'-'+str(i+1)
+                        q = ET.SubElement(t, 'text')
+                        q.text = query_term
 
-                self.indent(qf)
+                        self.indent(qf)
 
-                tree = ET.ElementTree(qf)
-                tree.write(os.path.join(self.corpus_path, output_root, part+'_'+qid.text))
+                        tree = ET.ElementTree(qf)
+                        tree.write(os.path.join(self.corpus_path, output_root, part+'_'+qid.text+'_'+index_path))
 
 
     def gen_run_split_query_paras(self, methods, use_which_part=['title']):
@@ -279,88 +259,6 @@ class Query(object):
                 idf.append( query_topic_idf )
         print np.mean(l), np.std(l)
         print np.mean(idf), np.std(idf)
-
-
-class ClueWebQuery(Query):
-    def get_queries(self):
-        """
-        Get the query of a corpus
-
-        @Return: a list of dict [{'num':'401', 'title':'the query terms',
-         'desc':description, 'narr': narrative description}, ...]
-        """
-
-        if not os.path.exists(self.parsed_query_file_path):
-            _all = []
-            with open(self.query_file_path) as f:
-                for line in f:
-                    line = line.strip()
-                    if line:
-                        row = line.split(':')
-                        num = row[0]
-                        text = row[1]
-                        query_text = self.parse_query([text])[0]
-                        _all.append({'num':num, 'title':query_text})
-
-            with open(self.parsed_query_file_path, 'wb') as f:
-                json.dump(_all, f, indent=2)
-
-        with open(self.parsed_query_file_path) as f:
-            return json.load(f)    
-
-class MicroBlogQuery(Query):
-    def gen_query_file_for_indri(self, output_foler='split_queries', 
-            index_root='index', is_trec_format=True, count=10000, 
-            remove_stopwords=False, use_which_part=['query']):
-        """
-        generate the query file for Indri use.
-
-        @Input:
-            output_root - the output root of the splitted query files
-            index_path - the index path, default "index".
-            is_trec_format - whether to output the results in TREC format, default True
-            count - how many documents will be returned for each topic, default 1000
-        """
-        if remove_stopwords:
-            with open('stopwords') as f:
-                stop_words_list = [line.strip() for line in f.readlines()]
-
-        output_root = os.path.join(self.corpus_path, output_foler)
-        if not os.path.exists(output_root):
-            os.makedirs(output_root)
-
-        all_topics = self.get_queries()
-
-        for ele in all_topics:
-            for part in use_which_part:
-                qf = ET.Element('parameters')
-                ele_trec_format = ET.SubElement(qf, 'trecFormat')
-                ele_trec_format.text = 'true' if is_trec_format else 'false'
-                ele_count = ET.SubElement(qf, 'count')
-                ele_count.text = str(count)
-
-                if remove_stopwords:
-                    ele_stopwords = ET.SubElement(qf, 'stopper')
-                    for w in stop_words_list:
-                        stopword = ET.SubElement(ele_stopwords, 'word')
-                        stopword.text = w
-                
-                t = ET.SubElement(qf, 'query')
-                qid = ET.SubElement(t, 'number')
-                qid.text = str(int(ele['num'][2:]))
-                q = ET.SubElement(t, 'text')
-                try:
-                    q.text = ele['query']
-                except:
-                    q.text = ele['title']
-                index = ET.SubElement(qf, 'index')
-                index.text = os.path.join(self.corpus_path, index_root, 'MB'+qid.text)
-
-                self.indent(qf)
-
-                tree = ET.ElementTree(qf)
-                tree.write(os.path.join(self.corpus_path, output_root, part+'_'+qid.text))
-
 
 
 if __name__ == '__main__':
