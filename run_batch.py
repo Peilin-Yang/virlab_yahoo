@@ -14,16 +14,6 @@ import inspect
 
 import ArrayJob
 import query
-import microblog
-import microblog_collections
-from worddocdensity import WordDocDensity
-from smart import SMART
-from results import Results
-from significant_test import SignificantTest
-import g
-import evaluation
-import performance
-from highchart import Highchart
 
 _root = '../collections/'
 
