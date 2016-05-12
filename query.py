@@ -91,8 +91,6 @@ class Query(object):
                 idx = 1
                 for i, query in enumerate(query_array):
                     parsed_query = self.parse_query([query])[0]
-                    print query, parsed_query
-                    raw_input()
                     if parsed_query not in unique_queries:
                         unique_queries[parsed_query] = idx
                         _all.append({'query': parsed_query, 'num': idx})
