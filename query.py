@@ -90,7 +90,7 @@ class Query(object):
                 query_array = json.load(f).keys()
                 idx = 1
                 for i, query in enumerate(query_array):
-                    parsed_query = self.parse_query(query)
+                    parsed_query = self.parse_query(query.split())
                     print query, parsed_query
                     raw_input()
                     if parsed_query not in unique_queries:
