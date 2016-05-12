@@ -201,7 +201,7 @@ class Query(object):
                         tree.write(os.path.join(self.corpus_path, output_root, part+'_'+qid.text+'_'+index_path))
 
 
-    def gen_run_split_query_paras(self, methods, use_which_part=['title']):
+    def gen_run_split_query_paras(self, methods, use_which_part=['query']):
         all_paras = []
         if not os.path.exists(self.split_results_root):
             os.makedirs(self.split_results_root)
@@ -214,7 +214,7 @@ class Query(object):
                 if 'paras' in m:
                     for p in itertools.product(*[ele[1] for ele in m['paras'].items()]):
                         para_str = '-rule=method:%s' % m['name']
-                        tmp = '-method:%s' % m['name']
+                        tmp = '_%s' % m['name']
                         for k_idx, k in enumerate(m['paras'].keys()):
                             para_str += ',%s:%s' % (k, p[k_idx])
                             tmp += ',%s:%s' % (k, p[k_idx])
@@ -226,7 +226,7 @@ class Query(object):
                                 para_str, results_fn) )
                 else:
                     para_str = '-rule=method:%s' % m['name']
-                    results_fn = os.path.join(self.split_results_root, qf+'-method:%s' % m['name'])
+                    results_fn = os.path.join(self.split_results_root, qf+'_%s' % m['name'])
                     if m['name'] == 'smart':
                             para_str += ',ctf_score_folder:%s' % os.path.join(self.corpus_path, 'smart_ctf')
                     if not os.path.exists(results_fn):
