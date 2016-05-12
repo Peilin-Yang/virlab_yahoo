@@ -35,6 +35,7 @@ class Process(object):
 
         for doc in docs:
             docno = str(doc['docno'])
+            self.output_doc(os.path.join(self.corpus_path, 'title'), docno, doc['title'])
             self.output_doc(os.path.join(self.corpus_path, 'abstract'), docno, doc['abstra'])
             self.output_doc(os.path.join(self.corpus_path, 'raw'), docno, doc['rawText'])
             word_vec = ' '.join(doc['rawText'].split()[:30])
