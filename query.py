@@ -28,7 +28,7 @@ class Query(object):
             print '[Evaluation Constructor]:Please provide a valid corpus path'
             exit(1)
 
-        self.query_file_path = os.path.join(self.corpus_path, 'json', 'queries.json')
+        self.query_file_path = os.path.join(self.corpus_path, 'json', 'unique_query.json')
         if not os.path.exists(self.query_file_path):
             frameinfo = getframeinfo(currentframe())
             print frameinfo.filename, frameinfo.lineno
@@ -87,10 +87,12 @@ class Query(object):
             unique_queries = {}
             _all = []
             with open(self.query_file_path) as f:
-                raw_query_json = json.load(f)
+                query_array = json.load(f).keys()
                 idx = 1
-                for ele in raw_query_json:
-                    parsed_query = self.parse_query(ele['query'])[0]
+                for i, query in enumerate(query_array):
+                    parsed_query = self.parse_query(query)
+                    print query, parsed_query
+                    raw_input()
                     if parsed_query not in unique_queries:
                         unique_queries[parsed_query] = idx
                         _all.append({'query': parsed_query, 'num': idx})
