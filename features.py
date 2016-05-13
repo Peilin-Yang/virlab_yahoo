@@ -76,6 +76,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.output_features_json:
-        Process(args.output_features_json[0]).output_features_json()
+        Features(args.output_features_json[0]).output_features_json()
     if args.output_retrieval_score:
-        Process(args.output_retrieval_score[0]).output_retrieval_score()
+        Features(args.output_retrieval_score[0]).output_retrieval_score()
