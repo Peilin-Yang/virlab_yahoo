@@ -50,13 +50,14 @@ class Process(object):
         """
         with open( os.path.join(self.corpus_path, 'json', 'unique_query.json') ) as f:
             queries = json.load(f)
-            unique_query = {}
-            for query in queries:
-                unique_query[query] = []
-                for docid in queries[query]:
-                    unique_query[query].append( (docid, queries[query][docid]['pos_cnt']) )
-            for query in unique_query:
-                unique_query[query].sort(key=itemgetter(1, 0), reverse=True)
+        unique_query = {}
+        for query in queries:
+            unique_query[query] = []
+            for docid in queries[query]:
+                unique_query[query].append( (docid, queries[query][docid]['pos_cnt']) )
+        for query in unique_query:
+            unique_query[query].sort(key=itemgetter(1, 0), reverse=True)
+        print unique_query
 
 
 if __name__ == '__main__':
