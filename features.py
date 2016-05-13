@@ -49,8 +49,6 @@ class Features(object):
                         if method not in all_queries[qid][docid]:
                             all_queries[qid][docid][method] = []
                         all_queries[qid][docid][method].append(float(row[4]))
-                        print all_queries
-                        raw_input()
         with open( os.path.join(self.features_root, 'retrieval_score.json'), 'wb' ) as f:
             json.dump(all_queries, f, indent=2, sort_keys=True)
 
