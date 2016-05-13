@@ -57,7 +57,8 @@ class Process(object):
                 unique_query[query].append( (docid, queries[query][docid]['pos_cnt']) )
         for query in unique_query:
             unique_query[query].sort(key=itemgetter(1, 0), reverse=True)
-        print unique_query
+        with open( os.path.join(self.corpus_path, 'json', 'judgement.json'), 'wb' ) as f:
+            json.dump(unique_query, f, indent=2, sort_keys=True)
 
 
 if __name__ == '__main__':
