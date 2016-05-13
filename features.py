@@ -69,8 +69,13 @@ if __name__ == '__main__':
         nargs=1,
         help="")
 
+    parser.add_argument("-r", "--output_retrieval_score",
+        nargs=1,
+        help="")
+
     args = parser.parse_args()
 
     if args.output_features_json:
         Process(args.output_features_json[0]).output_features_json()
-
+    if args.output_retrieval_score:
+        Process(args.output_retrieval_score[0]).output_retrieval_score()
