@@ -18,7 +18,7 @@ class Process(object):
         if not os.path.exists(self.corpus_path):
             frameinfo = getframeinfo(currentframe())
             print frameinfo.filename, frameinfo.lineno
-            print '[Evaluation Constructor]:Please provide a valid corpus path'
+            print '[Process Constructor]:Please provide a valid corpus path'
             exit(1)
 
     def output_doc(self, fn_path, docno, raw_content):
