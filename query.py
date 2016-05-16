@@ -37,6 +37,7 @@ class Query(object):
                 corpus path. You can create a symlink for it"""
             exit(1)
 
+        self.query_mapping_fn = os.path.join(self.corpus_path, 'json', 'query_mapping.json')
         self.parsed_query_file_path = os.path.join(self.corpus_path, 'json', 'parsed_topics.json')
         self.index_path = os.path.join(self.corpus_path, 'index')
         self.split_queries_root = os.path.join(self.corpus_path, 'split_queries')
@@ -86,6 +87,7 @@ class Query(object):
         if not os.path.exists(self.parsed_query_file_path):
             unique_queries = {}
             _all = []
+            query_mapping = {}
             with open(self.query_file_path) as f:
                 query_array = json.load(f).keys()
                 idx = 1
@@ -94,10 +96,12 @@ class Query(object):
                     if parsed_query not in unique_queries:
                         unique_queries[parsed_query] = idx
                         _all.append({'query': parsed_query, 'num': idx, 'orig': query})
+                        query_mapping[query] = {'parsed': parsed_query, 'num': idx}
                         idx += 1
             with open(self.parsed_query_file_path, 'wb') as f:
                 json.dump(_all, f, indent=2)
-
+            with open(self.query_mapping_fn, 'wb') as f:
+                json.dump(query_mapping, f, indent=2)
         exit()
         with open(self.parsed_query_file_path) as f:
             return json.load(f)

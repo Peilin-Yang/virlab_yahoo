@@ -21,6 +21,9 @@ class Process(object):
             print '[Process Constructor]:Please provide a valid corpus path'
             exit(1)
 
+        self.unique_query_fn = os.path.join(self.corpus_path, 'json', 'unique_query.json')
+        self.query_mapping_fn = os.path.join(self.corpus_path, 'json', 'query_mapping.json')
+
     def output_doc(self, fn_path, docno, raw_content):
         with open( fn_path, 'ab') as f:
             f.write('<DOC>\n')
@@ -44,12 +47,16 @@ class Process(object):
 
     def output_judgement(self):
         """
+        NOTICE: MUST RUN "python run_batch.py -a 0" BEFORE THIS CALL!!!!
+
         For each query, output all the documents that occur at least 
         once in its judgement. Try to count the times the document gets 
         positive and negative; We might want a ranking list though.
         """
-        with open( os.path.join(self.corpus_path, 'json', 'unique_query.json') ) as f:
+        with open( self.unique_query_fn ) as f:
             queries = json.load(f)
+        with open( self.query_mapping_fn ) as f:
+            query_mapping = json.load(f)
         unique_query = {}
         for query in queries:
             unique_query[query] = []
