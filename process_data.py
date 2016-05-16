@@ -61,7 +61,7 @@ class Process(object):
         for query in queries:
             qid = query_mapping[query]['num']
             unique_query[qid] = []
-            for docid in queries[qid]:
+            for docid in queries[query]:
                 unique_query[qid].append( (docid, queries[query][docid]['pos_cnt']) )
         for qid in unique_query:
             unique_query[qid].sort(key=itemgetter(1, 0), reverse=True)
