@@ -130,8 +130,7 @@ def change_split_results_atom(para_file):
                 if collection_name == q['collection']:
                     split_result_fn = row[1]
                     collection_path = os.path.join(_root, collection_name)
-                    all_paras.extend(q['query_class'](collection_path).change_split_results_atom(
-                        split_result_fn))
+                    q['query_class'](collection_path).change_split_results_atom(split_result_fn)
                     break
 
             
