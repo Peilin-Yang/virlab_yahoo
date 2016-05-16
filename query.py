@@ -250,7 +250,7 @@ class Query(object):
         if not os.path.exists(self.slim_split_results_root):
             os.makedirs(self.slim_split_results_root)
 
-        for fn in os.listdir( self.split_queries_root ):
+        for fn in os.listdir( self.split_results_root ):
             if not os.path.exists(os.path.join(self.slim_split_results_root, fn)):
                 all_paras.append( (self.corpus_path.split('/')[-1], fn) )
 
