@@ -59,11 +59,12 @@ class Process(object):
             query_mapping = json.load(f)
         unique_query = {}
         for query in queries:
-            unique_query[query] = []
-            for docid in queries[query]:
-                unique_query[query].append( (docid, queries[query][docid]['pos_cnt']) )
-        for query in unique_query:
-            unique_query[query].sort(key=itemgetter(1, 0), reverse=True)
+            qid = query_mapping[query]['num']
+            unique_query[qid] = []
+            for docid in queries[qid]:
+                unique_query[qid].append( (docid, queries[query][docid]['pos_cnt']) )
+        for qid in unique_query:
+            unique_query[qid].sort(key=itemgetter(1, 0), reverse=True)
         with open( os.path.join(self.corpus_path, 'json', 'judgement.json'), 'wb' ) as f:
             json.dump(unique_query, f, indent=2, sort_keys=True)
 
