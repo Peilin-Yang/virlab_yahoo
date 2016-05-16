@@ -37,7 +37,7 @@ class Query(object):
                 corpus path. You can create a symlink for it"""
             exit(1)
 
-        self.query_mapping_fn = os.path.join(self.corpus_path, 'json', 'query_mapping.json')
+        self.judgement_fn = os.path.join(self.corpus_path, 'json', 'judgement.json')
         self.parsed_query_file_path = os.path.join(self.corpus_path, 'json', 'parsed_topics.json')
         self.index_path = os.path.join(self.corpus_path, 'index')
         self.split_queries_root = os.path.join(self.corpus_path, 'split_queries')
@@ -256,8 +256,26 @@ class Query(object):
 
         return all_paras
 
-    def change_split_results_atom(self):
-        pass
+    def change_split_results_atom(self, fn):
+        with open(self.judgement_fn) as f:
+            _judgement = json.load(f)
+        judgement = {qid: [doc[0] for doc in documents] for qid, documents in _judgement.items()}
+
+        fn_split = fn.split('_')
+        query_type = fn_split[0]
+        qid = fn_split[1].split('-')[0]
+        termid = fn_split[1].split('-')[1]
+        method = fn_split[-1]
+
+        with open(os.path.join(self.split_results_root, fn)) as f:
+            with open(os.path.join(self.slim_split_results_root, fn), 'wb') as of:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        row = line.split()
+                        docid = row[2]
+                        if docid in judgement[qid]:
+                            of.write(line+'\n')
 
 
     def output_query_stats(self, query_part=None):

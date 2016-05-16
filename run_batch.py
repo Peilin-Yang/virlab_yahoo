@@ -118,7 +118,7 @@ def gen_change_split_results_batch():
             all_paras.extend(q['query_class'](collection_path).gen_change_split_results_paras())
 
     #print all_paras
-    gen_batch_framework('run_split_queries', 'b4', all_paras)
+    gen_batch_framework('change_split_results', 'b4', all_paras)
 
 
 def change_split_results_atom(para_file):
