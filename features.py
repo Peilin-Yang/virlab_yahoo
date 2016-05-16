@@ -28,6 +28,23 @@ class Features(object):
         if not os.path.exists(self.features_root):
             os.makedirs(self.features_root)
 
+    def output_features_json(self, fn_path, docno, raw_content):
+        with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
+            judgement = json.load(f)
+        template = {}
+        for query in judgement:
+            template[query] = {}
+            for doc in judgement[query]:
+                template[query][doc[0]] = {'pos_cnt': doc[1]}
+
+    def change_split_results(self):
+        with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
+            judgement = json.load(f)
+        for fn in os.listdir(self.split_results_root):
+            with open(os.path.join(self.split_results_root, fn)) as f:
+
+
+
     def output_retrieval_score(self):
         all_queries = {}
         for fn in os.listdir(self.split_results_root):
@@ -51,15 +68,6 @@ class Features(object):
                         all_queries[qid][docid][method].append(float(row[4]))
         with open( os.path.join(self.features_root, 'retrieval_score.json'), 'wb' ) as f:
             json.dump(all_queries, f, indent=2, sort_keys=True)
-
-    def output_features_json(self, fn_path, docno, raw_content):
-        with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
-            judgement = json.load(f)
-        template = {}
-        for query in judgement:
-            template[query] = {}
-            for doc in judgement[query]:
-                template[query][doc[0]] = {'pos_cnt': doc[1]}
 
 
 if __name__ == '__main__':

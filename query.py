@@ -93,11 +93,12 @@ class Query(object):
                     parsed_query = self.parse_query([query])[0]
                     if parsed_query not in unique_queries:
                         unique_queries[parsed_query] = idx
-                        _all.append({'query': parsed_query, 'num': idx})
+                        _all.append({'query': parsed_query, 'num': idx, 'orig': query})
                         idx += 1
             with open(self.parsed_query_file_path, 'wb') as f:
                 json.dump(_all, f, indent=2)
 
+        exit()
         with open(self.parsed_query_file_path) as f:
             return json.load(f)
 
@@ -233,6 +234,31 @@ class Query(object):
                         all_paras.append( (os.path.join(self.split_queries_root, qf), \
                             para_str, results_fn) )
         return all_paras
+
+    def gen_query_mappings(self):
+        """
+        generate the query mapping: the original query 
+        may contain characters (e.g. $,') which were removed 
+        for IndrinRunQuery_EX. We need a mapping as well as 
+        a mapping to query ID.
+        """
+
+
+
+    def gen_change_split_results_paras(self):
+        """
+        Reduce the split results contents by 
+        removing the documents that are not occurred 
+        in the query id. 
+        """
+        judgement = {}
+        with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
+            _judgement = json.load(f)
+            for qid in _judgement:
+                
+        for fn in os.listdir(self.split_results_root):
+            with open(os.path.join(self.split_results_root, fn)) as f:
+                pass
 
 
     def output_query_stats(self, query_part=None):
