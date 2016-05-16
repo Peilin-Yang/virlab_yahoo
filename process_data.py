@@ -59,6 +59,8 @@ class Process(object):
             query_mapping = json.load(f)
         unique_query = {}
         for query in queries:
+            if query not in query_mapping:
+                continue
             qid = query_mapping[query]['num']
             unique_query[qid] = []
             for docid in queries[query]:
