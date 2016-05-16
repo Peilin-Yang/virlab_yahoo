@@ -251,14 +251,15 @@ class Query(object):
         removing the documents that are not occurred 
         in the query id. 
         """
-        judgement = {}
-        with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
-            _judgement = json.load(f)
-            for qid in _judgement:
+        pass
+        # judgement = {}
+        # with open( os.path.join(self.corpus_path, 'json', 'judgement.json') ) as f:
+        #     _judgement = json.load(f)
+        #     for qid in _judgement:
                 
-        for fn in os.listdir(self.split_results_root):
-            with open(os.path.join(self.split_results_root, fn)) as f:
-                pass
+        # for fn in os.listdir(self.split_results_root):
+        #     with open(os.path.join(self.split_results_root, fn)) as f:
+        #         pass
 
 
     def output_query_stats(self, query_part=None):
