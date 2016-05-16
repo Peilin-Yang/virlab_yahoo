@@ -252,10 +252,12 @@ class Query(object):
 
         for fn in os.listdir( self.split_queries_root ):
             if not os.path.exists(os.path.join(self.slim_split_results_root, fn)):
-                all_paras.append( (os.path.join(self.split_results_root, fn), \
-                    os.path.join(self.slim_split_results_root, fn)) )
+                all_paras.append( (self.corpus_path.split('/')[-1], fn) )
 
         return all_paras
+
+    def change_split_results_atom(self):
+        pass
 
 
     def output_query_stats(self, query_part=None):

@@ -106,6 +106,34 @@ def run_query_atom(para_file):
             query_para = row[1]
             output_fn = row[2]
             run_query(query_fn, query_para, output_fn)
+
+
+def gen_change_split_results_batch():
+    all_paras = []
+    with open('g.json') as f:
+        methods = json.load(f)['methods']
+        for q in g.query:
+            collection_name = q['collection']
+            collection_path = os.path.join(_root, collection_name)
+            all_paras.extend(q['query_class'](collection_path).gen_change_split_results_paras())
+
+    #print all_paras
+    gen_batch_framework('run_split_queries', 'b4', all_paras)
+
+
+def change_split_results_atom(para_file):
+    with open(para_file) as f:
+        reader = csv.reader(f)
+        for row in reader:
+            collection_name = row[0]
+            for q in g.query:
+                if collection_name == q['collection']:
+                    split_result_fn = row[1]
+                    collection_path = os.path.join(_root, collection_name)
+                    all_paras.extend(q['query_class'](collection_path).change_split_results_atom(
+                        split_result_fn))
+                    break
+
             
 def run_query(query_fn, query_para, output_fn):
     p = Popen(['IndriRunQuery_EX', query_fn, query_para], stdout=PIPE, stderr=PIPE)
@@ -415,6 +443,13 @@ if __name__ == '__main__':
         nargs=1,
         help="Second Step: Run Query")
 
+    parser.add_argument("-b3", "--gen_change_split_results_batch",
+        action='store_true',
+        help="Slim the results so that only the documents for a query occur in the result files")
+    parser.add_argument("-b4", "--change_split_results_atom",
+        nargs=1,
+        help="atom of b3")
+
     parser.add_argument("-c1", "--gen_merge_split_results_batch",
         action='store_true',
         help="Third Step: We split the results by qid and by method(with paras). Now it is time to merge them.")
@@ -521,6 +556,11 @@ if __name__ == '__main__':
         gen_run_query_batch()
     if args.run_query_atom:
         run_query_atom(args.run_query_atom[0])
+
+    if args.gen_change_split_results_batch:
+        gen_change_split_results_batch()
+    if args.change_split_results_atom:
+        change_split_results_atom(args.change_split_results_atom[0])
 
     if args.gen_merge_split_results_batch:
         gen_merge_split_results_batch()
