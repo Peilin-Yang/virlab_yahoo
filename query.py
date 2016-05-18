@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys,os
+import csv
 import json
 import re
 import string
@@ -14,6 +15,8 @@ import numpy as np
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+g_collection_root = '../'
 
 class Query(object):
     """
@@ -303,6 +306,41 @@ class Query(object):
         print np.mean(l), np.std(l)
         print np.mean(idf), np.std(idf)
 
+class QueryTask0(Query):
+    def __init__(self, collection_path):
+        super(QueryTask0, self).__init__(collection_path)
+        self.feature_dir = os.path.join(self.corpus_path, 'feature')
+
+    def read_original_query(self):
+        queries = []
+        for fn in os.listdir(self.feature_dir):
+            if re.search(r'\.quj$', fn):
+                with open( os.path.join(self.feature_dir, fn) ) as f:
+                    r = csv.read(f, delimiter='\t')
+                    for row in r:
+                        query_comb = row['query'].split('#$#')
+                        query_str = query_comb[0]
+                        qid = query_comb[1]
+                        queries.append( (qid, query_str) )
+        return queries
+
+    def read_query_gen_from_proto(self):
+        with open(self.query_file_path) as f:
+            j = json.load(f)
+            return j.keys()
+
+    def check_query(self):
+        """
+        check whether the original query is the same as 
+        what we extracted from proto file.
+        """
+        orig_query = set([ele[1] for ele in self.read_original_query()])
+        query_from_proto = set(self.read_query_gen_from_proto())
+        print orig_query == query_from_proto
+
+
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -318,7 +356,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.gen_standard_queries:
-        Query(args.gen_standard_queries[0]).gen_query_file_for_indri()
+        q = QueryTask0 if args.gen_standard_queries[0] == 'task_0' else Query
+        q(os.path.join(g_collection_root, args.gen_standard_queries[0])).gen_query_file_for_indri()
 
     if args.print_query_stats:
         Query(args.print_query_stats[0]).output_query_stats()
