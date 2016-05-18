@@ -107,10 +107,8 @@ if __name__ == '__main__':
 
     if args.output_documents_for_index:
         p = ProcessTask0 if args.output_documents_for_index[0] == 'task_0' else ProcessTask1
-        p(os.path.join(g_collection_root, args.output_documents_for_index[0]))
-            .output_documents_for_index()
+        p(os.path.join(g_collection_root, args.output_documents_for_index[0])).output_documents_for_index()
     if args.output_judgement:
         p = ProcessTask0 if args.output_judgement[0] == 'task_0' else ProcessTask1
-        p(os.path.join(g_collection_root, args.output_judgement[0]))
-            .output_judgement()
+        p(os.path.join(g_collection_root, args.output_judgement[0])).output_judgement()
 
