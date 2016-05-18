@@ -336,6 +336,8 @@ class QueryTask0(Query):
         """
         orig_query = set([ele[1] for ele in self.read_original_query()])
         query_from_proto = set(self.read_query_gen_from_proto())
+        print orig_query
+        print query_from_proto
         print orig_query == query_from_proto
 
 
