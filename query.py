@@ -42,6 +42,7 @@ class Query(object):
 
         self.judgement_fn = os.path.join(self.corpus_path, 'json', 'judgement.json')
         self.parsed_query_file_path = os.path.join(self.corpus_path, 'json', 'parsed_topics.json')
+        self.query_mapping_fn = os.path.join(self.corpus_path, 'json', 'query_mapping.json')
         self.index_path = os.path.join(self.corpus_path, 'index')
         self.split_queries_root = os.path.join(self.corpus_path, 'split_queries')
         self.split_results_root = os.path.join(self.corpus_path, 'split_results')
@@ -336,8 +337,8 @@ class QueryTask0(Query):
         """
         orig_query = set([ele[1] for ele in self.read_original_query()])
         query_from_proto = set(self.read_query_gen_from_proto())
-        print json.dumps(list(orig_query), indent=2, sort_keys=True)
-        print json.dumps(list(query_from_proto), indent=2, sort_keys=True)
+        # print json.dumps(list(orig_query), indent=2, sort_keys=True)
+        # print json.dumps(list(query_from_proto), indent=2, sort_keys=True)
         print orig_query == query_from_proto
 
 
