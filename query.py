@@ -339,15 +339,16 @@ class QueryTask0(Query):
         print orig_query == query_from_proto
 
 
-
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-1", "--gen_standard_queries",
         nargs=1,
         help="Generate the standard queries for Indri. Please give the collection path!")
+
+    parser.add_argument("-check", "--check_query",
+        nargs=1,
+        help="Check whether the query extracted from proto file is the same as the original query in the feature file")
 
     parser.add_argument("-2", "--print_query_stats",
         nargs=1,
@@ -358,6 +359,10 @@ if __name__ == '__main__':
     if args.gen_standard_queries:
         q = QueryTask0 if args.gen_standard_queries[0] == 'task_0' else Query
         q(os.path.join(g_collection_root, args.gen_standard_queries[0])).gen_query_file_for_indri()
+
+    if args.check_query:
+        q = QueryTask0 if args.check_query[0] == 'task_0' else Query
+        q(os.path.join(g_collection_root, args.check_query[0])).check_query()
 
     if args.print_query_stats:
         Query(args.print_query_stats[0]).output_query_stats()
