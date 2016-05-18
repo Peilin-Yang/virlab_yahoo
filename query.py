@@ -336,8 +336,8 @@ class QueryTask0(Query):
         """
         orig_query = set([ele[1] for ele in self.read_original_query()])
         query_from_proto = set(self.read_query_gen_from_proto())
-        print json.dumps(orig_query, indent=2, sort_keys=True)
-        print json.dumps(query_from_proto, indent=2, sort_keys=True)
+        print json.dumps(list(orig_query), indent=2, sort_keys=True)
+        print json.dumps(list(query_from_proto), indent=2, sort_keys=True)
         print orig_query == query_from_proto
 
 
