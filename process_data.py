@@ -39,6 +39,9 @@ class Process(object):
         raise RuntimeError("Must Be implement by derived class")
 
 class ProcessTask0(Process):
+    def __init__(self, collection):
+        super(ProcessTask0, self).__init__(collection)
+
     def output_documents_for_index(self):
         with open( os.path.join(self.corpus_path, 'json', 'docs.json') ) as f:
             docs = json.load(f)
@@ -54,6 +57,9 @@ class ProcessTask0(Process):
 
 
 class ProcessTask1(Process):
+    def __init__(self, collection):
+        super(ProcessTask1, self).__init__(collection)
+
     def output_documents_for_index(self):
         with open( os.path.join(self.corpus_path, 'json', 'docs.json') ) as f:
             docs = json.load(f)
