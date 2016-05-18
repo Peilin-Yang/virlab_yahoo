@@ -25,6 +25,9 @@ class Process(object):
 
         self.unique_query_fn = os.path.join(self.corpus_path, 'json', 'unique_query.json')
         self.query_mapping_fn = os.path.join(self.corpus_path, 'json', 'query_mapping.json')
+        self.corpus_for_index_path = os.path.join(self.corpus_path, 'corpus')
+        if not os.path.exists(self.corpus_for_index_path):
+            os.makedirs(self.corpus_for_index_path)
 
     def output_doc(self, fn_path, docno, raw_content):
         with open( fn_path, 'ab') as f:
