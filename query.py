@@ -316,7 +316,7 @@ class QueryTask0(Query):
         for fn in os.listdir(self.feature_dir):
             if re.search(r'\.quj$', fn):
                 with open( os.path.join(self.feature_dir, fn) ) as f:
-                    r = csv.reader(f, delimiter='\t')
+                    r = csv.DictReader(f, delimiter='\t')
                     for row in r:
                         query_comb = row['query'].split('#$#')
                         query_str = query_comb[0]
