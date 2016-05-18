@@ -12,6 +12,8 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
+g_collection_root = '../'
+
 class Process(object):
     def __init__(self, collection_path):
         self.corpus_path = os.path.abspath(collection_path)
@@ -33,6 +35,24 @@ class Process(object):
             f.write('</TEXT>\n')
             f.write('</DOC>\n')
 
+    def output_documents_for_index(self):
+        raise RuntimeError("Must Be implement by derived class")
+
+class ProcessTask0(Process):
+    def output_documents_for_index(self):
+        with open( os.path.join(self.corpus_path, 'json', 'docs.json') ) as f:
+            docs = json.load(f)
+
+        for doc in docs:
+            docno = str(doc['docno'])
+            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'title'), docno, doc['title'])
+            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'abstract'), docno, doc['abstra'])
+            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'raw'), docno, doc['rawText'])
+            word_vec = ' '.join(doc['rawText'].split()[:30])
+            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'first30'), docno, word_vec)
+
+
+class ProcessTask1(Process):
     def output_documents_for_index(self):
         with open( os.path.join(self.corpus_path, 'json', 'docs.json') ) as f:
             docs = json.load(f)
@@ -85,7 +105,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.output_documents_for_index:
-        Process(args.output_documents_for_index[0]).output_documents_for_index()
+        p = ProcessTask0 if args.output_documents_for_index[0] == 'task_0' else ProcessTask1
+        p(os.path.join(g_collection_root, args.output_documents_for_index[0]))
+            .output_documents_for_index()
     if args.output_judgement:
-        Process(args.output_judgement[0]).output_judgement()
+        p = ProcessTask0 if args.output_judgement[0] == 'task_0' else ProcessTask1
+        p(os.path.join(g_collection_root, args.output_judgement[0]))
+            .output_judgement()
 

@@ -23,7 +23,9 @@ class Features(object):
             print '[Features Constructor]:Please provide a valid corpus path'
             exit(1)
 
-        self.split_results_root = os.path.join(self.corpus_path, 'split_results')
+        # need to use slim version of the results so that we 
+        # have lower chance to make memory failure
+        self.split_results_root = os.path.join(self.corpus_path, 'split_results_slim')
         self.features_root = os.path.join(self.corpus_path, 'features')
         if not os.path.exists(self.features_root):
             os.makedirs(self.features_root)
