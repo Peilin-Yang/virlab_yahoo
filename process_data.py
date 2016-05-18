@@ -43,13 +43,14 @@ class ProcessTask0(Process):
         with open( os.path.join(self.corpus_path, 'json', 'docs.json') ) as f:
             docs = json.load(f)
 
-        for doc in docs:
-            docno = str(doc['docno'])
-            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'title'), docno, doc['title'])
-            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'abstract'), docno, doc['abstra'])
-            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'raw'), docno, doc['rawText'])
-            word_vec = ' '.join(doc['rawText'].split()[:30])
-            self.output_doc(os.path.join(self.corpus_path, 'corpus', 'first30'), docno, word_vec)
+        for query in docs:
+            for doc in docs[query]:
+                docno = str(doc['url'])
+                self.output_doc(os.path.join(self.corpus_path, 'corpus', 'title'), docno, doc['title'])
+                self.output_doc(os.path.join(self.corpus_path, 'corpus', 'abstract'), docno, doc['abstra'])
+                self.output_doc(os.path.join(self.corpus_path, 'corpus', 'raw'), docno, doc['rawText'])
+                word_vec = ' '.join(doc['rawText'].split()[:30])
+                self.output_doc(os.path.join(self.corpus_path, 'corpus', 'first30'), docno, word_vec)
 
 
 class ProcessTask1(Process):
